@@ -1,16 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { ChurchListingItem } from '@/features/church/church-listing-item';
 import { getUserChurchListing } from '@/features/church/queries';
-import { MoreHorizontalIcon } from 'lucide-react';
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
@@ -34,40 +25,7 @@ async function MyListingPage() {
         <ul className="space-y-4">
           {churchListing.map((church) => (
             <li key={church.id}>
-              <Card>
-                <CardHeader className="flex flex-row gap-4 items-center">
-                  <Avatar className="rounded-full size-12 mb-2">
-                    {church.logo ? (
-                      <AvatarImage
-                        src={church.logo}
-                        alt={church.name}
-                        className="object-cover"
-                      />
-                    ) : null}
-                    <AvatarFallback></AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-2">
-                    <CardTitle>{church.name}</CardTitle>
-                    <CardDescription className="line-clamp-1">
-                      {church.fullAddress}
-                    </CardDescription>
-                  </div>
-                  <CardAction>
-                    <Button size="icon" variant="ghost">
-                      <MoreHorizontalIcon />
-                    </Button>
-                  </CardAction>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-end">
-                    <Button asChild>
-                      <Link href={`/my-listing/${church.id}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <ChurchListingItem church={church} />
             </li>
           ))}
         </ul>
