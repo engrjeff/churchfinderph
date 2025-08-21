@@ -25,7 +25,7 @@ export function MapEmbed() {
         loading="lazy"
         allowFullScreen
         referrerPolicy="no-referrer-when-downgrade"
-        src={`https://www.google.com/maps/embed/v1/directions?key=AIzaSyDA5JRkS97vrtWM2ttMLQXJ8oid0OTMw1Y&origin=${encodeURIComponent(
+        src={`https://www.google.com/maps/embed/v1/directions?key=aaa&origin=${encodeURIComponent(
           'Abide in the Vine PH'
         )}&center=${[lat, lng].join(',')}&destination=${encodeURIComponent(
           'Sulok Resort, Morong, Rizal'
