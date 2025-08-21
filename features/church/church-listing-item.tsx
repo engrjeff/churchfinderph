@@ -71,7 +71,7 @@ export function ChurchListingItem({ church }: { church: Church }) {
           variant="secondary"
           className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
         >
-          {church.stepsCompleted.length} of 5 details completed
+          {church.stepsCompleted.length} of 8 details completed
         </Badge>
       </CardContent>
       <CardFooter>

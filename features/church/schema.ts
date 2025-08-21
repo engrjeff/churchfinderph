@@ -65,6 +65,98 @@ export const updateChurchProfileSchema = churchProfileSchema.extend(
   idSchema.shape
 );
 
+export const churchServiceSchema = z.object({
+  title: z
+    .string({ message: 'Service title is required.' })
+    .min(1, { message: 'Service title is required.' }),
+  day: z
+    .string({ message: 'Service day is required.' })
+    .min(1, { message: 'Service day is required.' }),
+  time: z
+    .string({ message: 'Service time is required.' })
+    .min(1, { message: 'Service time is required.' }),
+});
+
+export const churchServicesSchema = z.object({
+  churchId: z.string({ message: 'Church ID is required.' }),
+  services: z
+    .array(churchServiceSchema)
+    .min(1, { message: 'At least one service is required.' })
+    .superRefine((items, ctx) => {
+      const uniqueItemsCount = new Set(
+        items.map((item) =>
+          [item.title.toLowerCase(), item.day, item.time].join('_')
+        )
+      ).size;
+
+      const errorPosition = items.length - 1;
+
+      if (uniqueItemsCount !== items.length) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Already exists.`,
+          path: [errorPosition, 'title'],
+        });
+      }
+    }),
+});
+
+export const churchMinistrySchema = z.object({
+  title: z
+    .string({ message: 'Ministry title is required.' })
+    .min(1, { message: 'Ministry title is required.' }),
+});
+
+export const churchPublicServiceSchema = z.object({
+  title: z
+    .string({ message: 'Public service title is required.' })
+    .min(1, { message: 'Public service title is required.' }),
+});
+
+export const churchMinistriesAndPublicServicessSchema = z.object({
+  churchId: z.string({ message: 'Church ID is required.' }),
+  ministries: z
+    .array(churchMinistrySchema)
+    .min(1, { message: 'At least one ministry is required.' })
+    .superRefine((items, ctx) => {
+      const uniqueItemsCount = new Set(
+        items.map((item) => item.title.toLowerCase())
+      ).size;
+
+      const errorPosition = items.length - 1;
+
+      if (uniqueItemsCount !== items.length) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Already exists.`,
+          path: [errorPosition, 'title'],
+        });
+      }
+    }),
+  publicServices: z
+    .array(churchPublicServiceSchema)
+    .min(1, { message: 'At least one public service is required.' })
+    .superRefine((items, ctx) => {
+      const uniqueItemsCount = new Set(
+        items.map((item) => item.title.toLowerCase())
+      ).size;
+
+      const errorPosition = items.length - 1;
+
+      if (uniqueItemsCount !== items.length) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Already exists.`,
+          path: [errorPosition, 'title'],
+        });
+      }
+    }),
+});
+
 // types
 export type ChurchInputs = z.infer<typeof churchSchema>;
 export type ChurchProfileInputs = z.infer<typeof churchProfileSchema>;
+export type ChurchServicesInputs = z.infer<typeof churchServicesSchema>;
+export type ChurchMinistriesAndPublicServicesInputs = z.infer<
+  typeof churchMinistriesAndPublicServicessSchema
+>;

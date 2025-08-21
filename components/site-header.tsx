@@ -19,29 +19,29 @@ export function SiteHeader() {
         </Link>
         <div className="ml-auto flex items-center gap-4">
           <SignedOut>
-            <Button asChild>
+            <Button size="sm" asChild>
               <Link href="/sign-in">Sign In</Link>
             </Button>
-            <Button variant="secondary" className="border" asChild>
+            <Button size="sm" variant="secondary" className="border" asChild>
               <Link href="/sign-up">Register</Link>
             </Button>
           </SignedOut>
           <SignedIn>
             {!isInHomePage ? (
               <>
-                <Button asChild>
+                <Button size="sm" asChild>
                   <Link href="/">
                     <SearchIcon /> Find a Church
                   </Link>
                 </Button>
-                <Button asChild variant="outline">
+                <Button size="sm" asChild variant="outline">
                   <Link href="/my-listing">
                     <ListIcon /> My Listing
                   </Link>
                 </Button>
               </>
             ) : (
-              <Button asChild>
+              <Button size="sm" asChild>
                 <Link href="/add-church">
                   <PlusCircleIcon /> Add My Church
                 </Link>

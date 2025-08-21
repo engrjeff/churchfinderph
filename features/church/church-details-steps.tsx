@@ -2,6 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import {
+  CalendarCheckIcon,
+  FlameIcon,
   ImagesIcon,
   InfoIcon,
   MapIcon,
@@ -28,6 +30,16 @@ const CHURCH_FORM_STEPS: Array<{
     label: 'Profile',
     icon: <InfoIcon />,
     step: 'profile',
+  },
+  {
+    label: 'Service Schedules',
+    icon: <CalendarCheckIcon />,
+    step: 'services',
+  },
+  {
+    label: 'Ministries',
+    icon: <FlameIcon />,
+    step: 'ministries',
   },
   {
     label: 'Contact Details',
@@ -65,6 +77,7 @@ export function ChurchDetailsSteps() {
           <li key={step.step}>
             <Button
               asChild
+              size="sm"
               variant={stepQuery === step.step ? 'default' : 'ghost'}
               className="justify-start w-full"
             >

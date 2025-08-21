@@ -18,6 +18,9 @@ export async function getUserChurchListing() {
       pastorDetails: true,
       churchMedia: true,
       churchMap: true,
+      services: true,
+      ministries: true,
+      publicServices: true,
     },
   });
 
@@ -39,6 +42,9 @@ export async function getUserChurchById({ churchId }: { churchId: string }) {
       pastorDetails: true,
       churchMedia: true,
       churchMap: true,
+      services: true,
+      ministries: true,
+      publicServices: true,
     },
   });
 

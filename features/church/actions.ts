@@ -6,8 +6,10 @@ import { authActionClient } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import slugify from 'slugify';
 import {
+  churchMinistriesAndPublicServicessSchema,
   churchProfileSchema,
   churchSchema,
+  churchServicesSchema,
   updateChurchProfileSchema,
   updateChurchSchema,
 } from './schema';
@@ -122,5 +124,122 @@ export const updateChurchProfile = authActionClient
 
     return {
       churchProfile,
+    };
+  });
+
+export const setChurchServices = authActionClient
+  .metadata({ actionName: 'setChurchServices' })
+  .inputSchema(churchServicesSchema)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    if (!user?.userId) throw new Error('Session not found.');
+
+    const foundChurch = await prisma.church.findUnique({
+      where: {
+        id: parsedInput.churchId,
+      },
+    });
+
+    const stepsCompleted = new Set(foundChurch?.stepsCompleted || []);
+
+    await prisma.churchService.deleteMany({
+      where: {
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      },
+    });
+
+    const services = await prisma.churchService.createMany({
+      data: parsedInput.services.map((service) => ({
+        ...service,
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      })),
+    });
+
+    stepsCompleted.add(CHURCH_STEPS.SERVICES);
+
+    await prisma.church.update({
+      where: {
+        id: parsedInput.churchId,
+      },
+      data: {
+        stepsCompleted: {
+          set: Array.from(stepsCompleted),
+        },
+      },
+    });
+
+    revalidatePath(`/my-listing/${parsedInput.churchId}`);
+
+    return {
+      services,
+    };
+  });
+
+export const setChurchMinistriesAndPublicServices = authActionClient
+  .metadata({ actionName: 'setChurchMinistriesAndPublicServices' })
+  .inputSchema(churchMinistriesAndPublicServicessSchema)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    if (!user?.userId) throw new Error('Session not found.');
+
+    const foundChurch = await prisma.church.findUnique({
+      where: {
+        id: parsedInput.churchId,
+      },
+    });
+
+    const stepsCompleted = new Set(foundChurch?.stepsCompleted || []);
+
+    // delete existing ministries and public services
+    await prisma.ministry.deleteMany({
+      where: {
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      },
+    });
+
+    await prisma.publicService.deleteMany({
+      where: {
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      },
+    });
+
+    // set new ministries and public services
+    const ministries = await prisma.ministry.createMany({
+      data: parsedInput.ministries.map((ministry) => ({
+        ...ministry,
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      })),
+    });
+
+    const publicServices = await prisma.publicService.createMany({
+      data: parsedInput.publicServices.map((publicService) => ({
+        ...publicService,
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      })),
+    });
+
+    stepsCompleted.add(CHURCH_STEPS.MINISTRIES);
+
+    await prisma.church.update({
+      where: {
+        id: parsedInput.churchId,
+      },
+      data: {
+        stepsCompleted: {
+          set: Array.from(stepsCompleted),
+        },
+      },
+    });
+
+    revalidatePath(`/my-listing/${parsedInput.churchId}`);
+
+    return {
+      ok: true,
+      ministries: ministries.count,
+      publicServices: publicServices.count,
     };
   });

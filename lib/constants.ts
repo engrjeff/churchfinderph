@@ -1,6 +1,8 @@
 export const CHURCH_STEPS = {
   BASIC: 'basic',
   PROFILE: 'profile',
+  SERVICES: 'services',
+  MINISTRIES: 'ministries',
   CONTACT_DETAILS: 'contact_details',
   PASTOR_DETAILS: 'pastor_details',
   MAP: 'church_map',

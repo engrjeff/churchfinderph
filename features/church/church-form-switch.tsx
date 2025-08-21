@@ -2,7 +2,9 @@
 
 import { useSearchParams } from 'next/navigation';
 import { ChurchForm } from './church-form';
+import { ChurchMinistriesForm } from './church-ministries-form';
 import ChurchProfileForm from './church-profile-form';
+import { ChurchServicesForm } from './church-services-form';
 import { ChurchStep, DetailedChurch } from './church.types';
 
 export function ChurchFormSwitch({ church }: { church: DetailedChurch }) {
@@ -17,6 +19,22 @@ export function ChurchFormSwitch({ church }: { church: DetailedChurch }) {
   if (stepQuery === 'profile') {
     return (
       <ChurchProfileForm churchId={church.id} churchProfile={church.profile} />
+    );
+  }
+
+  if (stepQuery === 'services') {
+    return (
+      <ChurchServicesForm churchId={church.id} services={church.services} />
+    );
+  }
+
+  if (stepQuery === 'ministries') {
+    return (
+      <ChurchMinistriesForm
+        churchId={church.id}
+        ministries={church.ministries}
+        publicServices={church.publicServices}
+      />
     );
   }
 
