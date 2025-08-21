@@ -1,7 +1,9 @@
 'use client';
 
+import { Church } from '@/app/generated/prisma';
 import { Autocomplete } from '@/components/ui/autocomplete';
 import { AvatarPicker } from '@/components/ui/avatar-picker';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -42,10 +44,27 @@ const DEFAULT_VALUES: ChurchInputs = {
   zipCode: '',
 };
 
-export function ChurchForm() {
+export function ChurchForm({ church }: { church?: Church }) {
+  const isEditing = Boolean(church);
+
+  const churchDefaultValues = church
+    ? {
+        name: church.name,
+        region: church.region,
+        province: church.province,
+        city: church.city,
+        barangay: church.barangay,
+        street: church.street,
+        welcomeMessage: church.welcomeMessage,
+        logo: church.logo ?? '',
+        fullAddress: church.fullAddress,
+        zipCode: church.zipCode ?? '',
+      }
+    : DEFAULT_VALUES;
+
   const form = useForm<ChurchInputs>({
     resolver: zodResolver(churchSchema),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: churchDefaultValues,
   });
 
   const [uploading, setUploading] = useState(false);
@@ -339,8 +358,19 @@ export function ChurchForm() {
             )}
           />
 
-          <div className="flex justify-end pt-6">
-            <SubmitButton loading={isPending}>Save Church</SubmitButton>
+          <div className="flex items-center justify-end gap-3 pt-6">
+            {isEditing ? (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => form.reset(churchDefaultValues)}
+              >
+                Reset
+              </Button>
+            ) : null}
+            <SubmitButton loading={isPending}>
+              {isEditing ? 'Save Changes' : 'Save Church'}
+            </SubmitButton>
           </div>
         </fieldset>
       </form>

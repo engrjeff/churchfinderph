@@ -60,12 +60,12 @@ export const AvatarPicker = ({
   return (
     <>
       <div className={cn('flex items-center gap-4')}>
-        <div className="relative flex size-24 items-center justify-center overflow-hidden rounded-lg border-2">
+        <div className="relative flex size-24 items-center justify-center overflow-hidden rounded-full border-2">
           {src ? (
             <img
               src={src}
               alt={acceptedFiles[0]?.name}
-              className="absolute inset-0 size-24 object-cover rounded-lg"
+              className="absolute inset-0 size-24 object-cover rounded-full"
             />
           ) : (
             <ImageIcon className="inset-0 size-8 text-border transition-colors group-hover:text-primary" />
