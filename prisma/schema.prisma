@@ -1,0 +1,268 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  INACTIVE
+}
+
+// CHURCH SCHEMA
+model Church {
+  id             String  @id @default(cuid())
+  name           String
+  logo           String?
+  welcomeMessage String
+  slug           String
+
+  region   String
+  province String
+  city     String
+  barangay String
+  street   String
+  zipCode  String?
+
+  fullAddress String
+
+  status PublishStatus @default(DRAFT)
+
+  userId String
+
+  profile        ChurchProfile?
+  contactDetails ChurchContact?
+  pastorDetails  Pastor?
+  churchMap      ChurchMap?
+  churchMedia    ChurchMedia?
+
+  services       ChurchService[]
+  ministries     Ministry[]
+  publicServices PublicService[]
+  confessions    Confession[]
+
+  contactInfo ContactInfo[]
+  socialLinks SocialLink[]
+
+  churchGallery ChurchGallery[]
+
+  stepsCompleted String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model ChurchProfile {
+  id                 String  @id @default(cuid())
+  mission            String?
+  vision             String?
+  churchSize         Int
+  communionFrequency String
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String @unique
+
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model ChurchService {
+  id        String   @id @default(cuid())
+  title     String
+  day       String
+  time      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model Ministry {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model PublicService {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model Confession {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model ContactInfo {
+  id        String  @id @default(cuid())
+  value     String
+  isPrimary Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id])
+  churchId String
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model SocialLink {
+  id       String @id @default(cuid())
+  url      String
+  platform String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id])
+  churchId String
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model ChurchContact {
+  id      String  @id @default(cuid())
+  email   String
+  website String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String @unique
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model Pastor {
+  id    String @id @default(cuid())
+  photo String
+  name  String
+  bio   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String @unique
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model ChurchMap {
+  id           String   @id @default(cuid())
+  latitude     Float?
+  longitude    Float?
+  landmarks    String[]
+  addressInMap String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String @unique
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model ChurchMedia {
+  id             String   @id @default(cuid())
+  gallery        String[] // array of image URLs
+  introVideoLink String? // e.g. a YouTube or Vimeo link
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String @unique
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
+
+model ChurchGallery {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  caption   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  churchId String
+
+  userId String
+
+  @@index([churchId])
+  @@index([userId])
+}
