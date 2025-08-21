@@ -12,6 +12,13 @@ export async function getUserChurchListing() {
 
   const listing = await prisma.church.findMany({
     where: { userId: user.userId },
+    include: {
+      profile: true,
+      contactDetails: true,
+      pastorDetails: true,
+      churchMedia: true,
+      churchMap: true,
+    },
   });
 
   return listing;
@@ -26,6 +33,13 @@ export async function getUserChurchById({ churchId }: { churchId: string }) {
 
   const church = await prisma.church.findFirst({
     where: { id: churchId, userId: user.userId },
+    include: {
+      profile: true,
+      contactDetails: true,
+      pastorDetails: true,
+      churchMedia: true,
+      churchMap: true,
+    },
   });
 
   if (!church) {

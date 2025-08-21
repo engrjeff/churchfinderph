@@ -50,5 +50,21 @@ export const idSchema = z.object({
 
 export const updateChurchSchema = churchSchema.extend(idSchema.shape);
 
+export const churchProfileSchema = z
+  .object({
+    mission: z.string().optional(),
+    vision: z.string().optional(),
+    churchSize: z.string({ message: 'Church size is required.' }),
+    communionFrequency: z.string({
+      message: 'Communion frequency is required.',
+    }),
+  })
+  .extend(churchIdSchema.shape);
+
+export const updateChurchProfileSchema = churchProfileSchema.extend(
+  idSchema.shape
+);
+
 // types
 export type ChurchInputs = z.infer<typeof churchSchema>;
+export type ChurchProfileInputs = z.infer<typeof churchProfileSchema>;

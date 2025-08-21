@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ChurchDetailsSteps } from '@/features/church/church-details-steps';
 import { ChurchFormSwitch } from '@/features/church/church-form-switch';
+import { ChurchStatusBadge } from '@/features/church/church-status-badge';
 import { getUserChurchById } from '@/features/church/queries';
 import { ForwardIcon, Share2Icon } from 'lucide-react';
 import { type Metadata } from 'next';
@@ -60,17 +61,24 @@ async function MyChurchPage({
           <AvatarFallback></AvatarFallback>
         </Avatar>
         <div className="space-y-1">
-          <h1 className="text-xl font-bold">{church.name}</h1>
+          <h1 className="text-xl font-bold">
+            {church.name} <ChurchStatusBadge churchStatus={church.status} />
+          </h1>
           <p className="text-muted-foreground text-sm">{church.fullAddress}</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <Button asChild>
-            <Link href={`/churches/${churchId}`}>
+          <Button asChild size="sm">
+            <Link href={`/churches/${churchId}`} target="_blank">
               <ForwardIcon /> Preview
             </Link>
           </Button>
-          <Button variant="secondary">
-            <Share2Icon /> Share Link
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Share church link"
+            className="size-8"
+          >
+            <Share2Icon />
           </Button>
         </div>
       </div>

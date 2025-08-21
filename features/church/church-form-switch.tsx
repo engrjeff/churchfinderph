@@ -1,11 +1,11 @@
 'use client';
 
-import { Church } from '@/app/generated/prisma';
 import { useSearchParams } from 'next/navigation';
 import { ChurchForm } from './church-form';
-import { ChurchStep } from './church.types';
+import ChurchProfileForm from './church-profile-form';
+import { ChurchStep, DetailedChurch } from './church.types';
 
-export function ChurchFormSwitch({ church }: { church: Church }) {
+export function ChurchFormSwitch({ church }: { church: DetailedChurch }) {
   const searchParams = useSearchParams();
 
   const stepQuery = (searchParams.get('step') as ChurchStep) ?? 'basic';
@@ -15,7 +15,9 @@ export function ChurchFormSwitch({ church }: { church: Church }) {
   }
 
   if (stepQuery === 'profile') {
-    return <p>Church Profile form</p>;
+    return (
+      <ChurchProfileForm churchId={church.id} churchProfile={church.profile} />
+    );
   }
 
   if (stepQuery === 'contact_details') {

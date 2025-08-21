@@ -69,7 +69,7 @@ model ChurchProfile {
   id                 String  @id @default(cuid())
   mission            String?
   vision             String?
-  churchSize         Int
+  churchSize         String // e.g. "Small (1-50)", "Medium (51-200)", "Large (201+)"
   communionFrequency String
 
   church   Church @relation(fields: [churchId], references: [id], onDelete: Cascade)

@@ -25,10 +25,11 @@ import { uploadLogo } from '@/lib/services';
 import { arrayToMap } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { createChurch } from './actions';
+import { createChurch, updateChurch } from './actions';
 import { ChurchInputs, churchSchema } from './schema';
 
 const DEFAULT_VALUES: ChurchInputs = {
@@ -67,6 +68,7 @@ export function ChurchForm({ church }: { church?: Church }) {
     defaultValues: churchDefaultValues,
   });
 
+  const router = useRouter();
   const [uploading, setUploading] = useState(false);
 
   const createAction = useAction(createChurch, {
@@ -76,7 +78,15 @@ export function ChurchForm({ church }: { church?: Church }) {
     },
   });
 
-  const isPending = createAction.isPending || uploading;
+  const updateAcion = useAction(updateChurch, {
+    onError: ({ error }) => {
+      console.error(error);
+      toast.error(`Error updating church`);
+    },
+  });
+
+  const isPending =
+    createAction.isPending || updateAcion.isPending || uploading;
 
   const currentRegion = form.watch('region');
   const currentProvince = form.watch('province');
@@ -128,8 +138,28 @@ export function ChurchForm({ church }: { church?: Church }) {
       let logoUrl: string | undefined = undefined;
 
       if (data.logo) {
-        // upload
-        logoUrl = await uploadLogo(data.logo, data.name);
+        if (isEditing && data.logo === church?.logo) {
+        } else {
+          // upload
+          logoUrl = await uploadLogo(data.logo, data.name);
+        }
+      }
+
+      if (isEditing) {
+        const result = await updateAcion.executeAsync({
+          id: church?.id!,
+          ...data,
+          logo: logoUrl,
+          fullAddress: getFullAddress(),
+        });
+
+        if (result.data?.church.id) {
+          toast.success('Church updated successfully!');
+        }
+
+        router.refresh();
+
+        return;
       }
 
       const result = await createAction.executeAsync({
@@ -144,9 +174,7 @@ export function ChurchForm({ church }: { church?: Church }) {
         });
         form.reset(DEFAULT_VALUES);
 
-        window.location.replace(
-          `/my-listing/${result.data.church.id}?step=profile`
-        );
+        router.replace(`/my-listing/${result.data.church.id}?step=profile`);
       }
     } catch (error) {
     } finally {
@@ -368,7 +396,10 @@ export function ChurchForm({ church }: { church?: Church }) {
                 Reset
               </Button>
             ) : null}
-            <SubmitButton loading={isPending}>
+            <SubmitButton
+              disabled={!form.formState.isDirty}
+              loading={isPending}
+            >
               {isEditing ? 'Save Changes' : 'Save Church'}
             </SubmitButton>
           </div>
