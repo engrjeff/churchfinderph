@@ -1,6 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { ChurchContactForm } from './church-contact-form';
 import { ChurchForm } from './church-form';
 import { ChurchMinistriesForm } from './church-ministries-form';
 import ChurchProfileForm from './church-profile-form';
@@ -39,7 +40,14 @@ export function ChurchFormSwitch({ church }: { church: DetailedChurch }) {
   }
 
   if (stepQuery === 'contact_details') {
-    return <p>Church Contact Details form</p>;
+    return (
+      <ChurchContactForm
+        churchId={church.id}
+        contactInfo={church.contactDetails}
+        phoneNumbers={church.contactInfo}
+        socialLinks={church.socialLinks}
+      />
+    );
   }
 
   if (stepQuery === 'pastor_details') {

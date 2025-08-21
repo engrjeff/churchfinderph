@@ -5,9 +5,11 @@ import {
   ChurchMedia,
   ChurchProfile,
   ChurchService,
+  ContactInfo,
   Ministry,
   Pastor,
   PublicService,
+  SocialLink,
 } from '@/app/generated/prisma';
 
 export type ChurchStep =
@@ -29,4 +31,6 @@ export interface DetailedChurch extends Church {
   services: ChurchService[];
   ministries: Ministry[];
   publicServices: PublicService[];
+  contactInfo: ContactInfo[];
+  socialLinks: SocialLink[];
 }

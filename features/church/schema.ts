@@ -153,10 +153,62 @@ export const churchMinistriesAndPublicServicessSchema = z.object({
     }),
 });
 
+export const churchContactSchema = z.object({
+  email: z.email({ message: 'Provide a valid email.' }),
+  website: z.url({ message: 'Provide a valid website URL.' }).optional(),
+});
+
+export const churchPhoneSchema = z.object({
+  value: z.string({ message: 'Phone number is required.' }),
+  isPrimary: z.boolean().optional(),
+});
+
+export const churchSocialLinkSchema = z.object({
+  url: z.url({ message: 'Provide a valid URL.' }),
+  platform: z.string({ message: 'Social platform is required.' }),
+});
+
+export const churchContactAndSocialsSchema = z.object({
+  churchId: z.string({ message: 'Church ID is required.' }),
+  contactInfo: churchContactSchema,
+  phoneNumbers: z.array(churchPhoneSchema).superRefine((items, ctx) => {
+    const uniqueItemsCount = new Set(items.map((item) => item.value)).size;
+
+    const errorPosition = items.length - 1;
+
+    if (uniqueItemsCount !== items.length) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Already exists.`,
+        path: [errorPosition, 'value'],
+      });
+    }
+  }),
+  socialLinks: z.array(churchSocialLinkSchema).superRefine((items, ctx) => {
+    const uniqueItemsCount = new Set(
+      items.map((item) => [item.url.toLowerCase(), item.platform].join('_'))
+    ).size;
+
+    const errorPosition = items.length - 1;
+
+    if (uniqueItemsCount !== items.length) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Already exists.`,
+        path: [errorPosition, 'url'],
+      });
+    }
+  }),
+});
+
 // types
 export type ChurchInputs = z.infer<typeof churchSchema>;
 export type ChurchProfileInputs = z.infer<typeof churchProfileSchema>;
 export type ChurchServicesInputs = z.infer<typeof churchServicesSchema>;
 export type ChurchMinistriesAndPublicServicesInputs = z.infer<
   typeof churchMinistriesAndPublicServicessSchema
+>;
+
+export type ChurchContactAndSocialsInputs = z.infer<
+  typeof churchContactAndSocialsSchema
 >;

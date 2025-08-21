@@ -6,6 +6,7 @@ import { authActionClient } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import slugify from 'slugify';
 import {
+  churchContactAndSocialsSchema,
   churchMinistriesAndPublicServicessSchema,
   churchProfileSchema,
   churchSchema,
@@ -241,5 +242,87 @@ export const setChurchMinistriesAndPublicServices = authActionClient
       ok: true,
       ministries: ministries.count,
       publicServices: publicServices.count,
+    };
+  });
+
+export const setChurchContactAndSocialLinks = authActionClient
+  .metadata({ actionName: 'setChurchContactAndSocialLinks' })
+  .inputSchema(churchContactAndSocialsSchema)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    if (!user?.userId) throw new Error('Session not found.');
+
+    const foundChurch = await prisma.church.findUnique({
+      where: {
+        id: parsedInput.churchId,
+      },
+    });
+
+    const stepsCompleted = new Set(foundChurch?.stepsCompleted || []);
+
+    // delete existing church contact and social links
+    await prisma.churchContact.deleteMany({
+      where: {
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      },
+    });
+
+    await prisma.contactInfo.deleteMany({
+      where: {
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      },
+    });
+
+    await prisma.socialLink.deleteMany({
+      where: {
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      },
+    });
+
+    // set new church contact and social links
+    stepsCompleted.add(CHURCH_STEPS.CONTACT_DETAILS);
+
+    const updatedChurch = await prisma.church.update({
+      where: {
+        id: parsedInput.churchId,
+      },
+      data: {
+        contactDetails: {
+          create: {
+            email: parsedInput.contactInfo.email,
+            website: parsedInput.contactInfo.website,
+            userId: user.userId,
+          },
+        },
+        contactInfo: {
+          createMany: {
+            data: parsedInput.phoneNumbers.map((p) => ({
+              value: p.value,
+              isPrimary: p.isPrimary,
+              userId: user.userId,
+            })),
+          },
+        },
+        socialLinks: {
+          createMany: {
+            data: parsedInput.socialLinks.map((s) => ({
+              url: s.url,
+              platform: s.platform,
+              userId: user.userId,
+            })),
+          },
+        },
+        stepsCompleted: {
+          set: Array.from(stepsCompleted),
+        },
+      },
+    });
+
+    revalidatePath(`/my-listing/${parsedInput.churchId}`);
+
+    return {
+      church: updatedChurch,
     };
   });

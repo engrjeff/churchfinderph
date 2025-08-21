@@ -24,3 +24,13 @@ export const COMMUNION_FREQUENCY_OPTIONS = [
   { value: 'Yearly', label: 'Yearly' },
   { value: 'Other', label: 'Other' },
 ];
+
+export const SOCIAL_PLATFORM_OPTIONS = [
+  { value: 'YouTube' },
+  { value: 'Facebook' },
+  { value: 'Instagram' },
+  { value: 'Tiktok' },
+  { value: 'X (Twitter)' },
+  { value: 'Pinterest' },
+  { value: 'Linkedin' },
+];

@@ -21,6 +21,8 @@ export async function getUserChurchListing() {
       services: true,
       ministries: true,
       publicServices: true,
+      contactInfo: true,
+      socialLinks: true,
     },
   });
 
@@ -45,6 +47,8 @@ export async function getUserChurchById({ churchId }: { churchId: string }) {
       services: true,
       ministries: true,
       publicServices: true,
+      contactInfo: true,
+      socialLinks: true,
     },
   });
 
