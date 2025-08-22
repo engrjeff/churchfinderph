@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Textarea } from '@/components/ui/textarea';
-import { uploadLogo } from '@/lib/services';
+import { uploadImage } from '@/lib/services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
@@ -81,7 +81,17 @@ export function ChurchPastorForm({
         if (isEditing && data.photoUrl === pastorDetails?.photoUrl) {
         } else {
           // upload
-          photoUrl = await uploadLogo(data.photoUrl, churchName);
+          const uploadResult = await uploadImage(
+            data.photoUrl,
+            churchName,
+            'pastor'
+          );
+
+          if (uploadResult.error) {
+            return;
+          }
+
+          photoUrl = uploadResult.url as string;
         }
       }
 

@@ -21,7 +21,7 @@ import {
   useProvinces,
   useRegions,
 } from '@/hooks/use-addresses';
-import { uploadLogo } from '@/lib/services';
+import { uploadImage } from '@/lib/services';
 import { arrayToMap } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAction } from 'next-safe-action/hooks';
@@ -141,7 +141,13 @@ export function ChurchForm({ church }: { church?: Church }) {
         if (isEditing && data.logo === church?.logo) {
         } else {
           // upload
-          logoUrl = await uploadLogo(data.logo, data.name);
+          const uploadResult = await uploadImage(data.logo, data.name, 'logo');
+
+          if (uploadResult.error) {
+            return;
+          }
+
+          logoUrl = uploadResult.url as string;
         }
       }
 
