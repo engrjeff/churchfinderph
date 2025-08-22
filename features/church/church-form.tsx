@@ -408,37 +408,3 @@ export function ChurchForm({ church }: { church?: Church }) {
     </Form>
   );
 }
-
-{
-  /* <CldUploadWidget
-            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!}
-            signatureEndpoint="/api/sign-cloudinary-params"
-            options={{
-              sources: ['local', 'url'],
-              maxFiles: 1,
-              folder: 'churchfinderphdev/churches/logos',
-              singleUploadAutoClose: false,
-            }}
-            onSuccess={(result) => {
-              if (
-                typeof result.info === 'object' &&
-                'secure_url' in result.info
-              ) {
-                console.log(result.info.secure_url);
-                form.setValue('logo', result.info.secure_url);
-              }
-            }}
-            onError={(error) => {
-              console.error('Upload error:', error);
-              toast.error('Failed to upload image');
-            }}
-          >
-            {({ open }) => {
-              return (
-                <Button type="button" onClick={() => open()}>
-                  Upload an Image
-                </Button>
-              );
-            }}
-          </CldUploadWidget> */
-}
