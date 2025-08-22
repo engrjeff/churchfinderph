@@ -223,6 +223,28 @@ export const churchMapSchema = z
   })
   .extend(churchIdSchema.shape);
 
+// church media schema
+export const churchMediaSchema = z
+  .object({
+    gallery: z.array(z.object({ url: z.url() })).superRefine((items, ctx) => {
+      const uniqueItemsCount = new Set(items.map((item) => item.url)).size;
+
+      const errorPosition = items.length - 1;
+
+      if (uniqueItemsCount !== items.length) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Already exists.`,
+          path: [errorPosition, 'url'],
+        });
+      }
+    }), // array of image URLs
+    introVideoLink: z
+      .url({ message: 'Provide a valid video link.' })
+      .optional(),
+  })
+  .extend(churchIdSchema.shape);
+
 // types
 export type ChurchInputs = z.infer<typeof churchSchema>;
 export type ChurchProfileInputs = z.infer<typeof churchProfileSchema>;
@@ -237,3 +259,4 @@ export type ChurchContactAndSocialsInputs = z.infer<
 
 export type ChurchPastorInputs = z.infer<typeof churchPastorSchema>;
 export type ChurchMapInputs = z.infer<typeof churchMapSchema>;
+export type ChurchMediaInputs = z.infer<typeof churchMediaSchema>;

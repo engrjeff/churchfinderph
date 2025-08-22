@@ -10,6 +10,7 @@ import {
   churchContactAndSocialsSchema,
   churchIdSchema,
   churchMapSchema,
+  churchMediaSchema,
   churchMinistriesAndPublicServicessSchema,
   churchPastorSchema,
   churchProfileSchema,
@@ -443,6 +444,50 @@ export const publishChurch = authActionClient
     });
 
     revalidatePath(`/my-listing/${churchId}`);
+
+    return { church };
+  });
+
+// church media actions
+export const setChurchMedia = authActionClient
+  .metadata({ actionName: 'setChurchMedia' })
+  .inputSchema(churchMediaSchema)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    const foundChurch = await prisma.church.findFirst({
+      where: { id: parsedInput.churchId, userId: user.userId },
+    });
+
+    const stepsCompleted = new Set(foundChurch?.stepsCompleted || []);
+
+    // delete associated church media
+    await prisma.churchMedia.deleteMany({
+      where: { churchId: parsedInput.churchId },
+    });
+
+    stepsCompleted.add(CHURCH_STEPS.MEDIA);
+
+    // update church with new church media
+    const church = await prisma.church.update({
+      where: {
+        id: parsedInput.churchId,
+      },
+      data: {
+        stepsCompleted: {
+          set: Array.from(stepsCompleted),
+        },
+        churchMedia: {
+          create: {
+            userId: user.userId,
+            gallery: {
+              set: parsedInput.gallery?.map((g) => g.url),
+            },
+            introVideoLink: parsedInput.introVideoLink,
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/my-listing/${parsedInput.churchId}`);
 
     return { church };
   });

@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { ChurchContactForm } from './church-contact-form';
 import { ChurchForm } from './church-form';
 import { ChurchMapForm } from './church-map-form';
+import { ChurchMediaForm } from './church-media-form';
 import { ChurchMinistriesForm } from './church-ministries-form';
 import { ChurchPastorForm } from './church-pastor-form';
 import ChurchProfileForm from './church-profile-form';
@@ -67,7 +68,13 @@ export function ChurchFormSwitch({ church }: { church: DetailedChurch }) {
   }
 
   if (stepQuery === 'church_media') {
-    return <p>Church Media form</p>;
+    return (
+      <ChurchMediaForm
+        churchId={church.id}
+        churchName={church.name}
+        churchMedia={church.churchMedia}
+      />
+    );
   }
 
   return <p>Unknown step</p>;

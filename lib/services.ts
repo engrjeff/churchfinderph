@@ -1,12 +1,12 @@
 import { toast } from 'sonner';
 
 export async function uploadImage(
-  logo: string,
+  fileUrl: string,
   folderSubPath: string,
-  type: 'logo' | 'pastor'
+  type: 'logo' | 'pastor' | `gallery-${number}`
 ) {
-  if (!logo || !folderSubPath) {
-    toast.error('Please upload a logo and enter a church name');
+  if (!fileUrl || !folderSubPath) {
+    toast.error('Please upload a file and enter a church name');
     return { error: true, url: null };
   }
 
@@ -15,7 +15,7 @@ export async function uploadImage(
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ file: logo, churchName: folderSubPath, type }),
+    body: JSON.stringify({ file: fileUrl, churchName: folderSubPath, type }),
   });
 
   if (!response.ok) {
@@ -32,4 +32,27 @@ export async function uploadImage(
   }
 
   return { error: false, url: result.url as string };
+}
+
+/**
+ *
+ * @param fileData array of data URLs
+ * @returns the image URLs
+ */
+export async function uploadGalleryImages(
+  fileData: string[],
+  churchName: string
+) {
+  const result = await Promise.all(
+    fileData.map(async (fileUri, index) => {
+      const uploadResult = await uploadImage(
+        fileUri,
+        churchName,
+        `gallery-${index + 1}`
+      );
+      return { url: uploadResult.url as string };
+    })
+  ).then((values) => values.filter((i) => Boolean(i.url)));
+
+  return result;
 }
