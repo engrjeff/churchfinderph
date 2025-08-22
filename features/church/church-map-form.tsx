@@ -3,6 +3,7 @@ import { Church, ChurchMap } from '@/app/generated/prisma';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapPinIcon } from 'lucide-react';
@@ -108,6 +109,13 @@ export function ChurchMapForm({
 
   return (
     <div className="space-y-4">
+      <div>
+        <h1 className="text-xl font-bold">Map</h1>
+        <p className="text-muted-foreground text-sm">
+          Let people know how to easily find your church.
+        </p>
+      </div>
+      <Separator />
       <fieldset
         disabled={isPending}
         className="flex items-center gap-3 relative disabled:opacity-90"
