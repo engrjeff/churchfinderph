@@ -22,7 +22,7 @@ import { getYouTubeVideoId } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImagePlusIcon, XIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import {
   SubmitErrorHandler,
   SubmitHandler,
@@ -59,6 +59,11 @@ export function ChurchMediaForm({
     control: form.control,
     name: 'gallery',
   });
+
+  useEffect(() => {
+    if (uploading) {
+    }
+  }, []);
 
   const [uploading, setUploading] = useState(false);
 

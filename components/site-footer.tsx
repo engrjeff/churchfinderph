@@ -1,4 +1,4 @@
-import { ChurchIcon, HeartIcon, MapPinIcon, MailIcon } from 'lucide-react';
+import { ChurchIcon, HeartIcon, MailIcon, MapPinIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export function SiteFooter() {
@@ -13,8 +13,9 @@ export function SiteFooter() {
               <span className="text-lg font-bold">ChurchFinder PH</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Connecting believers with biblical churches across the Philippines. 
-              Find your spiritual home and grow in your faith journey.
+              Connecting believers with biblical churches across the
+              Philippines. Find your spiritual home and grow in your faith
+              journey.
             </p>
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <MapPinIcon className="h-4 w-4" />
@@ -26,20 +27,20 @@ export function SiteFooter() {
           <div className="space-y-4">
             <h3 className="text-sm font-semibold">Quick Links</h3>
             <nav className="flex flex-col space-y-2">
-              <Link 
-                href="/sign-up" 
+              <Link
+                href="/sign-up"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Find Churches
               </Link>
-              <Link 
-                href="/add-church" 
+              <Link
+                href="/add-church"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Add Your Church
               </Link>
-              <Link 
-                href="/sign-in" 
+              <Link
+                href="/sign-in"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Sign In
@@ -51,26 +52,26 @@ export function SiteFooter() {
           <div className="space-y-4">
             <h3 className="text-sm font-semibold">Resources</h3>
             <nav className="flex flex-col space-y-2">
-              <Link 
-                href="/about" 
+              <Link
+                href="/about"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 About Us
               </Link>
-              <Link 
-                href="/contact" 
+              <Link
+                href="/contact"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Contact
               </Link>
-              <Link 
-                href="/help" 
+              <Link
+                href="/help"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Help & Support
               </Link>
-              <Link 
-                href="/privacy" 
+              <Link
+                href="/privacy"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Privacy Policy
@@ -88,7 +89,8 @@ export function SiteFooter() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Have a church to add or need help? We'd love to hear from you.
+              Have a church to add or need help? We&apos;d love to hear from
+              you.
             </p>
           </div>
         </div>

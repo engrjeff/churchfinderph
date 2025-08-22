@@ -24,32 +24,31 @@ export const AvatarPicker = ({
   onChange,
   onDelete,
 }: AvatarPickerProps) => {
-  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
-    useDropzone({
-      accept: {
-        'image/*': [],
-      },
-      multiple: false,
-      onDrop(acceptedFiles, fileRejections, event) {
-        if (fileRejections.length > 0) {
-          console.error('File rejected:', fileRejections);
-          return;
-        }
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    accept: {
+      'image/*': [],
+    },
+    multiple: false,
+    onDrop(acceptedFiles, fileRejections) {
+      if (fileRejections.length > 0) {
+        console.error('File rejected:', fileRejections);
+        return;
+      }
 
-        const file = acceptedFiles[0];
+      const file = acceptedFiles[0];
 
-        const reader = new FileReader();
+      const reader = new FileReader();
 
-        reader.onabort = () => console.log('file reading was aborted');
-        reader.onerror = () => console.log('file reading has failed');
-        reader.onload = () => {
-          // Do whatever you want with the file contents
-          const dataUrl = reader.result;
-          onChange(file, dataUrl as string);
-        };
-        reader.readAsDataURL(file);
-      },
-    });
+      reader.onabort = () => console.log('file reading was aborted');
+      reader.onerror = () => console.log('file reading has failed');
+      reader.onload = () => {
+        // Do whatever you want with the file contents
+        const dataUrl = reader.result;
+        onChange(file, dataUrl as string);
+      };
+      reader.readAsDataURL(file);
+    },
+  });
 
   React.useEffect(() => {
     if (!src) return;
