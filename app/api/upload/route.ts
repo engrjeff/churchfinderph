@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const file = body.file;
     const churchName = body.churchName;
 
-    const folder = `churchfinderphdev/churches/${churchName}/media`;
+    const folder = `${process.env.NEXT_PUBLIC_CLOUDINARY_CHURCH_FOLDER}/churches/${churchName}/media`;
 
     const paramsToSign = {
       folder,
