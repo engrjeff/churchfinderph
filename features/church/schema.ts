@@ -201,6 +201,19 @@ export const churchContactAndSocialsSchema = z.object({
   }),
 });
 
+// Pastor schema
+export const churchPastorSchema = z
+  .object({
+    name: z.string({ message: 'Name is required.' }),
+    bio: z.string({ message: 'Bio is required.' }),
+    photoUrl: z.url({ message: 'Provide a valid photo URL.' }).optional(),
+  })
+  .extend(churchIdSchema.shape);
+
+export const updateChurchPastorSchema = churchPastorSchema.extend(
+  idSchema.shape
+);
+
 // types
 export type ChurchInputs = z.infer<typeof churchSchema>;
 export type ChurchProfileInputs = z.infer<typeof churchProfileSchema>;
@@ -212,3 +225,5 @@ export type ChurchMinistriesAndPublicServicesInputs = z.infer<
 export type ChurchContactAndSocialsInputs = z.infer<
   typeof churchContactAndSocialsSchema
 >;
+
+export type ChurchPastorInputs = z.infer<typeof churchPastorSchema>;

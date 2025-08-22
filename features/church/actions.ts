@@ -8,9 +8,11 @@ import slugify from 'slugify';
 import {
   churchContactAndSocialsSchema,
   churchMinistriesAndPublicServicessSchema,
+  churchPastorSchema,
   churchProfileSchema,
   churchSchema,
   churchServicesSchema,
+  updateChurchPastorSchema,
   updateChurchProfileSchema,
   updateChurchSchema,
 } from './schema';
@@ -325,4 +327,56 @@ export const setChurchContactAndSocialLinks = authActionClient
     return {
       church: updatedChurch,
     };
+  });
+
+// pastor actions
+export const createChurchPastor = authActionClient
+  .metadata({ actionName: 'createChurchPastor' })
+  .inputSchema(churchPastorSchema)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    // create the pastor record
+    const pastor = await prisma.pastor.create({
+      data: {
+        name: parsedInput.name,
+        bio: parsedInput.bio,
+        photoUrl: parsedInput.photoUrl,
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      },
+    });
+
+    // update steps
+    await prisma.church.update({
+      where: { id: parsedInput.churchId, userId: user.userId },
+      data: {
+        stepsCompleted: {
+          push: CHURCH_STEPS.PASTOR_DETAILS,
+        },
+      },
+    });
+
+    revalidatePath(`/my-listing/${parsedInput.churchId}`);
+
+    return { pastor };
+  });
+
+export const updateChurchPastor = authActionClient
+  .metadata({ actionName: 'updateChurchPastor' })
+  .inputSchema(updateChurchPastorSchema)
+  .action(async ({ parsedInput }) => {
+    // update the pastor record
+    const pastor = await prisma.pastor.update({
+      where: {
+        id: parsedInput.id,
+      },
+      data: {
+        name: parsedInput.name,
+        bio: parsedInput.bio,
+        photoUrl: parsedInput.photoUrl,
+      },
+    });
+
+    revalidatePath(`/my-listing/${parsedInput.churchId}`);
+
+    return { pastor };
   });

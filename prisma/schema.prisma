@@ -198,10 +198,10 @@ model ChurchContact {
 }
 
 model Pastor {
-  id    String @id @default(cuid())
-  photo String
-  name  String
-  bio   String
+  id       String  @id @default(cuid())
+  photoUrl String?
+  name     String
+  bio      String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
