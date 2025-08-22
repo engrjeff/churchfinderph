@@ -1,5 +1,6 @@
 'use server';
 
+import { PublishStatus } from '@/app/generated/prisma';
 import { CHURCH_STEPS } from '@/lib/constants';
 import { prisma } from '@/lib/prisma';
 import { authActionClient } from '@/lib/safe-action';
@@ -7,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 import slugify from 'slugify';
 import {
   churchContactAndSocialsSchema,
+  churchIdSchema,
   churchMapSchema,
   churchMinistriesAndPublicServicessSchema,
   churchPastorSchema,
@@ -426,4 +428,21 @@ export const setChurchMap = authActionClient
     revalidatePath(`/my-listing/${parsedInput.churchId}`);
 
     return { churchMap };
+  });
+
+export const publishChurch = authActionClient
+  .metadata({ actionName: 'publishChurch' })
+  .inputSchema(churchIdSchema)
+  .action(async ({ parsedInput: { churchId }, ctx: { user } }) => {
+    // update status
+    const church = await prisma.church.update({
+      where: { id: churchId, userId: user.userId },
+      data: {
+        status: PublishStatus.PUBLISHED,
+      },
+    });
+
+    revalidatePath(`/my-listing/${churchId}`);
+
+    return { church };
   });

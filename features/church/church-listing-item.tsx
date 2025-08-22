@@ -1,4 +1,4 @@
-import { Church } from '@/app/generated/prisma';
+import { Church, PublishStatus } from '@/app/generated/prisma';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { MoreHorizontalIcon } from 'lucide-react';
+import { CheckIcon, MoreHorizontalIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import {
@@ -67,12 +67,21 @@ export function ChurchListingItem({ church }: { church: Church }) {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <Badge
-          variant="secondary"
-          className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-        >
-          {church.stepsCompleted.length} of 8 details completed
-        </Badge>
+        {church.status === PublishStatus.PUBLISHED ? (
+          <Badge
+            variant="secondary"
+            className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+          >
+            Published <CheckIcon />
+          </Badge>
+        ) : (
+          <Badge
+            variant="secondary"
+            className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+          >
+            {church.stepsCompleted.length} of 8 details completed
+          </Badge>
+        )}
       </CardContent>
       <CardFooter>
         <Button asChild>

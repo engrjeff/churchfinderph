@@ -1,3 +1,4 @@
+import { PublishStatus } from '@/app/generated/prisma';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Breadcrumb,
@@ -11,8 +12,10 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ChurchDetailsSteps } from '@/features/church/church-details-steps';
 import { ChurchFormSwitch } from '@/features/church/church-form-switch';
+import { ChurchPublishButton } from '@/features/church/church-publish-button';
 import { ChurchStatusBadge } from '@/features/church/church-status-badge';
 import { getUserChurchById } from '@/features/church/queries';
+import { CHURCH_STEPS } from '@/lib/constants';
 import { ForwardIcon, Share2Icon } from 'lucide-react';
 import { type Metadata } from 'next';
 import Link from 'next/link';
@@ -33,6 +36,10 @@ async function MyChurchPage({
   const church = await getUserChurchById({ churchId });
 
   if (!church) return notFound();
+
+  const isPublishable =
+    church.stepsCompleted.length >= Object.keys(CHURCH_STEPS).length - 1 &&
+    church.status !== PublishStatus.PUBLISHED;
 
   return (
     <div className="space-y-6 mx-auto px-4 py-10 max-w-6xl">
@@ -67,7 +74,8 @@ async function MyChurchPage({
           <p className="text-muted-foreground text-sm">{church.fullAddress}</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <Button asChild size="sm">
+          {isPublishable ? <ChurchPublishButton churchId={church.id} /> : null}
+          <Button asChild variant="outline" size="sm">
             <Link href={`/churches/${churchId}`} target="_blank">
               <ForwardIcon /> Preview
             </Link>
