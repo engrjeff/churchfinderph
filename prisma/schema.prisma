@@ -217,10 +217,10 @@ model Pastor {
 
 model ChurchMap {
   id           String   @id @default(cuid())
-  latitude     Float?
-  longitude    Float?
+  latitude     Float
+  longitude    Float
   landmarks    String[]
-  addressInMap String?
+  addressInMap String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

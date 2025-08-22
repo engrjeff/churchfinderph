@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { ChurchContactForm } from './church-contact-form';
 import { ChurchForm } from './church-form';
+import { ChurchMapForm } from './church-map-form';
 import { ChurchMinistriesForm } from './church-ministries-form';
 import { ChurchPastorForm } from './church-pastor-form';
 import ChurchProfileForm from './church-profile-form';
@@ -62,7 +63,7 @@ export function ChurchFormSwitch({ church }: { church: DetailedChurch }) {
   }
 
   if (stepQuery === 'church_map') {
-    return <p>Church Map form</p>;
+    return <ChurchMapForm church={church} churchMap={church.churchMap} />;
   }
 
   if (stepQuery === 'church_media') {

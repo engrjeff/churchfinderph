@@ -52,11 +52,5 @@ export async function getUserChurchById({ churchId }: { churchId: string }) {
     },
   });
 
-  if (!church) {
-    throw new Error(
-      'Church not found or you do not have permission to view it'
-    );
-  }
-
   return church;
 }

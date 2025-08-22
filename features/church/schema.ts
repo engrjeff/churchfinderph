@@ -214,6 +214,15 @@ export const updateChurchPastorSchema = churchPastorSchema.extend(
   idSchema.shape
 );
 
+// Church map schema
+export const churchMapSchema = z
+  .object({
+    latitude: z.number({ message: 'Latitude is required.' }),
+    longitude: z.number({ message: 'Longitude is required.' }),
+    addressInMap: z.string({ message: 'Address is required.' }),
+  })
+  .extend(churchIdSchema.shape);
+
 // types
 export type ChurchInputs = z.infer<typeof churchSchema>;
 export type ChurchProfileInputs = z.infer<typeof churchProfileSchema>;
@@ -227,3 +236,4 @@ export type ChurchContactAndSocialsInputs = z.infer<
 >;
 
 export type ChurchPastorInputs = z.infer<typeof churchPastorSchema>;
+export type ChurchMapInputs = z.infer<typeof churchMapSchema>;

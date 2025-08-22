@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import slugify from 'slugify';
 import {
   churchContactAndSocialsSchema,
+  churchMapSchema,
   churchMinistriesAndPublicServicessSchema,
   churchPastorSchema,
   churchProfileSchema,
@@ -379,4 +380,50 @@ export const updateChurchPastor = authActionClient
     revalidatePath(`/my-listing/${parsedInput.churchId}`);
 
     return { pastor };
+  });
+
+// church map actions
+export const setChurchMap = authActionClient
+  .metadata({ actionName: 'setChurchMap' })
+  .inputSchema(churchMapSchema)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    const foundChurch = await prisma.church.findUnique({
+      where: {
+        id: parsedInput.churchId,
+      },
+    });
+
+    const stepsCompleted = new Set(foundChurch?.stepsCompleted || []);
+
+    // delete the existing church map
+    await prisma.churchMap.deleteMany({
+      where: { churchId: parsedInput.churchId },
+    });
+
+    // create a new church map record
+    const churchMap = await prisma.churchMap.create({
+      data: {
+        latitude: parsedInput.latitude,
+        longitude: parsedInput.longitude,
+        addressInMap: parsedInput.addressInMap,
+        churchId: parsedInput.churchId,
+        userId: user.userId,
+      },
+    });
+
+    stepsCompleted.add(CHURCH_STEPS.MAP);
+
+    // update steps
+    await prisma.church.update({
+      where: { id: parsedInput.churchId, userId: user.userId },
+      data: {
+        stepsCompleted: {
+          set: Array.from(stepsCompleted),
+        },
+      },
+    });
+
+    revalidatePath(`/my-listing/${parsedInput.churchId}`);
+
+    return { churchMap };
   });
