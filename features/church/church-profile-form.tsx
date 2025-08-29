@@ -105,7 +105,7 @@ function ChurchProfileForm({
         form.reset(DEFAULT_VALUES);
 
         router.replace(
-          `/my-listing/${result.data.churchProfile.churchId}?step=contact_details`
+          `/my-listing/${result.data.churchProfile.churchId}?step=services`
         );
       }
     } catch (error) {

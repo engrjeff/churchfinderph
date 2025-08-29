@@ -1,5 +1,6 @@
 'use client';
 import { Church, ChurchMap } from '@/app/generated/prisma';
+import { MapEmbed } from '@/components/map-embed';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,8 +13,6 @@ import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { setChurchMap } from './actions';
 import { churchMapSchema } from './schema';
-
-const MAP_EMBED_SRC = `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&region=PH&q=LOCATION`;
 
 export function ChurchMapForm({
   church,
@@ -120,7 +119,7 @@ export function ChurchMapForm({
         disabled={isPending}
         className="flex items-center gap-3 relative disabled:opacity-90"
       >
-        <MapPinIcon className="text-muted-foreground size-4 absolute top-3 left-3" />
+        <MapPinIcon className="text-muted-foreground size-4 absolute top-1/2 -translate-y-1/2 left-2" />
         <Label htmlFor="address" className="sr-only">
           Address
         </Label>
@@ -128,7 +127,7 @@ export function ChurchMapForm({
           ref={inputRef}
           id="address"
           name="address"
-          className="pl-9"
+          className="pl-7"
           defaultValue={address}
         />
         <Button
@@ -140,17 +139,7 @@ export function ChurchMapForm({
           Find In Map
         </Button>
       </fieldset>
-      <div className="aspect-video border rounded-md overflow-hidden">
-        <iframe
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          loading="lazy"
-          allowFullScreen
-          referrerPolicy="no-referrer-when-downgrade"
-          src={MAP_EMBED_SRC.replace('LOCATION', encodeURIComponent(address))}
-        ></iframe>
-      </div>
+      <MapEmbed location={address} />
       <div className="border rounded-md p-4 space-y-2">
         <p>Does this look right to you?</p>
         <SubmitButton

@@ -17,7 +17,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { uploadImage } from '@/lib/services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAction } from 'next-safe-action/hooks';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -48,8 +47,6 @@ export function ChurchPastorForm({
   });
 
   const [uploading, setUploading] = useState(false);
-
-  const router = useRouter();
 
   const createAction = useAction(createChurchPastor, {
     onError: ({ error }) => {
@@ -104,7 +101,7 @@ export function ChurchPastorForm({
 
         if (result.data?.pastor?.id) {
           toast.success('Church pastor was saved successfully!');
-          router.refresh();
+          window.location.reload();
         }
 
         return;
@@ -117,7 +114,7 @@ export function ChurchPastorForm({
 
       if (result.data?.pastor?.id) {
         toast.success('Church pastor was created successfully!');
-        router.refresh();
+        window.location.reload();
       }
     } catch (error) {
     } finally {
@@ -191,7 +188,10 @@ export function ChurchPastorForm({
             )}
           />
           <div className="pt-6 flex justify-end">
-            <SubmitButton disabled={!form.formState.isDirty} loading={isBusy}>
+            <SubmitButton
+              disabled={!form.formState.isDirty && isEditing}
+              loading={isBusy}
+            >
               Save Details
             </SubmitButton>
           </div>

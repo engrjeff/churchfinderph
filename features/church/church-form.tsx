@@ -34,6 +34,10 @@ import { ChurchInputs, churchSchema } from './schema';
 
 const DEFAULT_VALUES: ChurchInputs = {
   name: '',
+  regionCode: '',
+  provinceCode: '',
+  cityCode: '',
+  barangayCode: '',
   region: '',
   province: '',
   city: '',
@@ -55,6 +59,10 @@ export function ChurchForm({ church }: { church?: Church }) {
         province: church.province,
         city: church.city,
         barangay: church.barangay,
+        regionCode: church.regionCode,
+        provinceCode: church.provinceCode,
+        cityCode: church.cityCode,
+        barangayCode: church.barangayCode,
         street: church.street,
         welcomeMessage: church.welcomeMessage,
         logo: church.logo ?? '',
@@ -69,6 +77,7 @@ export function ChurchForm({ church }: { church?: Church }) {
   });
 
   const router = useRouter();
+
   const [uploading, setUploading] = useState(false);
 
   const createAction = useAction(createChurch, {
@@ -88,10 +97,10 @@ export function ChurchForm({ church }: { church?: Church }) {
   const isPending =
     createAction.isPending || updateAcion.isPending || uploading;
 
-  const currentRegion = form.watch('region');
-  const currentProvince = form.watch('province');
-  const currentCity = form.watch('city');
-  const currentBarangay = form.watch('barangay');
+  const currentRegion = form.watch('regionCode');
+  const currentProvince = form.watch('provinceCode');
+  const currentCity = form.watch('cityCode');
+  const currentBarangay = form.watch('barangayCode');
   const street = form.watch('street');
 
   // addresses
@@ -101,30 +110,27 @@ export function ChurchForm({ church }: { church?: Church }) {
   const { data: barangays = [] } = useBarangays(currentCity);
 
   const getFullAddress = () => {
-    const regionName = arrayToMap(regions, 'region_code', 'region_name').get(
+    const region = arrayToMap(regions, 'region_code', 'region_name').get(
       currentRegion
-    );
-    const provinceName = arrayToMap(
+    ) as string;
+
+    const province = arrayToMap(
       provinces,
       'province_code',
       'province_name'
-    ).get(currentProvince);
-    const cityName = arrayToMap(cities, 'city_code', 'city_name').get(
+    ).get(currentProvince) as string;
+
+    const city = arrayToMap(cities, 'city_code', 'city_name').get(
       currentCity
-    );
-    const barangayName = arrayToMap(barangays, 'brgy_code', 'brgy_name').get(
+    ) as string;
+
+    const barangay = arrayToMap(barangays, 'brgy_code', 'brgy_name').get(
       currentBarangay
-    );
+    ) as string;
 
-    const fullAddress = [
-      street,
-      barangayName,
-      cityName,
-      provinceName,
-      regionName,
-    ].join(', ');
+    const fullAddress = [street, barangay, city, province, region].join(', ');
 
-    return fullAddress;
+    return { region, province, city, barangay, fullAddress };
   };
 
   const onFormError: SubmitErrorHandler<ChurchInputs> = (errors) => {
@@ -152,11 +158,13 @@ export function ChurchForm({ church }: { church?: Church }) {
       }
 
       if (isEditing) {
+        const addressData = getFullAddress();
+
         const result = await updateAcion.executeAsync({
           id: church?.id!,
           ...data,
           logo: logoUrl,
-          fullAddress: getFullAddress(),
+          ...addressData,
         });
 
         if (result.data?.church.id) {
@@ -171,7 +179,7 @@ export function ChurchForm({ church }: { church?: Church }) {
       const result = await createAction.executeAsync({
         ...data,
         logo: logoUrl,
-        fullAddress: getFullAddress(),
+        ...getFullAddress(),
       });
 
       if (result.data?.church.id) {
@@ -239,7 +247,7 @@ export function ChurchForm({ church }: { church?: Church }) {
             name="street"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Where is church located?</FormLabel>
+                <FormLabel>Where is your church located?</FormLabel>
                 <FormControl>
                   <Textarea
                     rows={2}
@@ -255,7 +263,7 @@ export function ChurchForm({ church }: { church?: Church }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="region"
+              name="regionCode"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Region</FormLabel>
@@ -266,9 +274,15 @@ export function ChurchForm({ church }: { church?: Church }) {
                       value={field.value}
                       onChange={(value) => {
                         field.onChange(value);
+
                         form.setValue('province', '');
+                        form.setValue('provinceCode', '');
+
                         form.setValue('city', '');
+                        form.setValue('cityCode', '');
+
                         form.setValue('barangay', '');
+                        form.setValue('barangayCode', '');
                       }}
                       options={
                         regions?.map((i) => ({
@@ -284,7 +298,7 @@ export function ChurchForm({ church }: { church?: Church }) {
             />
             <FormField
               control={form.control}
-              name="province"
+              name="provinceCode"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Province</FormLabel>
@@ -295,8 +309,12 @@ export function ChurchForm({ church }: { church?: Church }) {
                       value={field.value}
                       onChange={(value) => {
                         field.onChange(value);
+
                         form.setValue('city', '');
+                        form.setValue('cityCode', '');
+
                         form.setValue('barangay', '');
+                        form.setValue('barangayCode', '');
                       }}
                       options={provinces.map((i) => ({
                         value: i.province_code,
@@ -311,7 +329,7 @@ export function ChurchForm({ church }: { church?: Church }) {
             />
             <FormField
               control={form.control}
-              name="city"
+              name="cityCode"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Town/City</FormLabel>
@@ -323,6 +341,7 @@ export function ChurchForm({ church }: { church?: Church }) {
                       onChange={(value) => {
                         field.onChange(value);
                         form.setValue('barangay', '');
+                        form.setValue('barangayCode', '');
                       }}
                       options={cities.map((i) => ({
                         value: i.city_code,
@@ -337,7 +356,7 @@ export function ChurchForm({ church }: { church?: Church }) {
             />
             <FormField
               control={form.control}
-              name="barangay"
+              name="barangayCode"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Town/City</FormLabel>

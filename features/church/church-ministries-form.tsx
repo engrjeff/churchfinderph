@@ -58,6 +58,10 @@ export function ChurchMinistriesForm({
         ],
   };
 
+  const isEditing =
+    Boolean(ministries && ministries?.length > 0) ||
+    Boolean(publicServices && publicServices.length > 0);
+
   const form = useForm<ChurchMinistriesAndPublicServicesInputs>({
     resolver: zodResolver(churchMinistriesAndPublicServicessSchema),
     defaultValues,
@@ -99,7 +103,13 @@ export function ChurchMinistriesForm({
           'Church ministries and public services were set successfully!'
         );
 
-        window.location.reload();
+        if (isEditing) {
+          window.location.reload();
+        } else {
+          window.location.replace(
+            `/my-listing/${churchId}?step=contact_details`
+          );
+        }
       }
     } catch (error) {
     } finally {
@@ -209,7 +219,10 @@ export function ChurchMinistriesForm({
           </Button>
 
           <div className="pt-6 flex justify-end">
-            <SubmitButton disabled={!form.formState.isDirty} loading={isBusy}>
+            <SubmitButton
+              disabled={!form.formState.isDirty && isEditing}
+              loading={isBusy}
+            >
               Save Ministries
             </SubmitButton>
           </div>

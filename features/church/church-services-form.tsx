@@ -45,6 +45,8 @@ export function ChurchServicesForm({
           { title: 'Sunday Service', day: 'Sunday', time: '13:00' },
         ];
 
+  const isEditing = Boolean(services && services?.length > 0);
+
   const form = useForm<ChurchServicesInputs>({
     resolver: zodResolver(churchServicesSchema),
     defaultValues: {
@@ -78,7 +80,11 @@ export function ChurchServicesForm({
       if (result.data?.services.count) {
         toast.success('Church services were set successfully!');
 
-        window.location.reload();
+        if (isEditing) {
+          window.location.reload();
+        } else {
+          window.location.replace(`/my-listing/${churchId}?step=ministries`);
+        }
       }
     } catch (error) {
     } finally {
@@ -190,7 +196,10 @@ export function ChurchServicesForm({
           </Button>
 
           <div className="pt-6 flex justify-end">
-            <SubmitButton disabled={!form.formState.isDirty} loading={isBusy}>
+            <SubmitButton
+              disabled={!form.formState.isDirty && isEditing}
+              loading={isBusy}
+            >
               Save Services
             </SubmitButton>
           </div>

@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ChurchListingItem } from '@/features/church/church-listing-item';
 import { getUserChurchListing } from '@/features/church/queries';
+import { PlusIcon } from 'lucide-react';
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
@@ -21,6 +22,13 @@ async function MyListingPage() {
         </p>
       </div>
       <Separator />
+      <div className="flex justify-end">
+        <Button className="border" asChild>
+          <Link href="/add-church">
+            <PlusIcon /> Add Church
+          </Link>
+        </Button>
+      </div>
       {churchListing.length > 0 ? (
         <ul className="space-y-4">
           {churchListing.map((church) => (

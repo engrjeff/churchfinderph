@@ -1,6 +1,7 @@
 'use client';
 
 import { ChurchContact, ContactInfo, SocialLink } from '@/app/generated/prisma';
+import { FaviconImage } from '@/components/favicon-image';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -193,7 +194,7 @@ export function ChurchContactForm({
           {socialLinkFields.fields.map((field, index) => (
             <div
               key={field.id}
-              className="grid grid-cols-[1fr_1fr_auto] items-end gap-4"
+              className="grid grid-cols-[1fr_150px_auto] items-end gap-4"
             >
               <FormField
                 control={form.control}
@@ -203,14 +204,20 @@ export function ChurchContactForm({
                     <FormDescription className={cn(index !== 0 && 'sr-only')}>
                       URL
                     </FormDescription>
-                    <FormControl>
-                      <Input
-                        type="url"
-                        inputMode="url"
-                        placeholder="https://youtube.com/mychurch"
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className="relative">
+                      <span className="absolute top-1/2 -translate-y-1/2 left-2">
+                        <FaviconImage url={field.value} size={18} />
+                      </span>
+                      <FormControl>
+                        <Input
+                          type="url"
+                          inputMode="url"
+                          placeholder="https://youtube.com/mychurch"
+                          className="pl-8"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />

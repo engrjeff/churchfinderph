@@ -9,29 +9,39 @@ export const churchSchema = z.object({
     .string({ message: 'Street Address is required.' })
     .min(1, { message: 'Street Address is required.' }),
 
-  region: z
+  regionCode: z
     .string({ message: 'Region is required.' })
     .min(1, { message: 'Region is required.' }),
 
-  province: z
+  provinceCode: z
     .string({ message: 'Province is required.' })
     .min(1, { message: 'Province is required.' }),
 
-  city: z
+  cityCode: z
     .string({ message: 'Town/City is required.' })
     .min(1, { message: 'Town/City is required.' }),
 
-  barangay: z
+  barangayCode: z
     .string({ message: 'Barangay is required.' })
     .min(1, { message: 'Barangay is required.' }),
 
-  zipCode: z.string().optional(),
+  zipCode: z
+    .string({ message: 'ZIP code is required.' })
+    .min(1, { message: 'ZIP code is required.' }),
 
   welcomeMessage: z
     .string({ message: 'Welcome message is required.' })
     .min(1, { message: 'Welcome message is required.' }),
 
   logo: z.url({ message: 'Invalid church logo url' })?.optional(),
+
+  region: z.string(),
+
+  province: z.string(),
+
+  city: z.string(),
+
+  barangay: z.string(),
 
   fullAddress: z.string(),
 });
